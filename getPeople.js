@@ -1,7 +1,7 @@
 const https = require('https')
 const fs = require('fs')
 
-function requestInstructions() {
+function getPeople() {
     const options = {
         hostname: 'nc-leaks.herokuapp.com',
         path: '/api/people',
@@ -23,4 +23,4 @@ function requestInstructions() {
     request.end()
 }
 
-requestInstructions()
+getPeople()

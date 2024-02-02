@@ -1,0 +1,34 @@
+const https = require('https')
+const fs = require('fs/promises')
+const { writeFileSync } = require('fs')
+
+function getInterests() {
+    fs.readFile('./northcoders.json', 'utf8')
+        .then((fileContents) => {
+            const interestArr = []
+            const personArr = JSON.parse(fileContents)
+            personArr.forEach((personObj) => {
+                const options = {
+                    hostname: 'nc-leaks.herokuapp.com',
+                    path: `/api/people/${personObj.username}/interests`,
+                    method: 'GET'
+                }
+                const request = https.request(options, (response) => {
+                    let body = ""
+                    response.on('data', (packet) => {
+                        body += packet.toString()
+                    })
+                    response.on("end", () => {
+                        const parsedBody = JSON.parse(body)
+                        interestArr.push(parsedBody.person)
+                        if (interestArr.length === personArr.length) {
+                            writeFileSync("interests.json", JSON.stringify(interestArr))
+                        }
+                    })
+                })
+                request.end()
+            })
+        })
+}
+
+getInterests()
